@@ -6,6 +6,12 @@
 
 #define SPSystemDefinedEventMediaKeys 8
 
+@class SPMediaKeyTap;
+
+@protocol SPMediaKeyTapDelegate <NSObject>
+- (void)mediaKeyTap:(SPMediaKeyTap *)keyTap receivedMediaKeyEvent:(NSEvent *)event;
+@end
+
 @interface SPMediaKeyTap : NSObject {
 	EventHandlerRef _app_switching_ref;
 	EventHandlerRef _app_terminating_ref;
@@ -13,22 +19,19 @@
 	CFRunLoopSourceRef _eventPortSource;
 	CFRunLoopRef _tapThreadRL;
 	BOOL _shouldInterceptMediaKeyEvents;
-	id _delegate;
-	// The app that is frontmost in this list owns media keys
-	NSMutableArray *_mediaKeyAppList;
 }
+
+@property (nonatomic, weak) id<SPMediaKeyTapDelegate> delegate;
+
 + (NSArray*)defaultMediaKeyUserBundleIdentifiers;
 
--(id)initWithDelegate:(id)delegate;
+- (instancetype)initWithDelegate:(id<SPMediaKeyTapDelegate>)delegate;
 
 +(BOOL)usesGlobalMediaKeyTap;
 -(void)startWatchingMediaKeys;
 -(void)stopWatchingMediaKeys;
 -(void)handleAndReleaseMediaKeyEvent:(NSEvent *)event;
-@end
 
-@interface NSObject (SPMediaKeyTapDelegate)
--(void)mediaKeyTap:(SPMediaKeyTap*)keyTap receivedMediaKeyEvent:(NSEvent*)event;
 @end
 
 #ifdef __cplusplus
