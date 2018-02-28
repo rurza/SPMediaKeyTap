@@ -121,7 +121,7 @@ static SPMediaKeyTap *singleton = nil;
 + (NSArray*)defaultMediaKeyUserBundleIdentifiers;
 {
 	return @[
-		[[NSBundle mainBundle] bundleIdentifier], // your app
+		[[NSBundle mainBundle] bundleIdentifier],
 		@"com.spotify.client",
 		@"com.apple.iTunes",
 		@"com.apple.QuickTimePlayerX",
@@ -141,7 +141,8 @@ static SPMediaKeyTap *singleton = nil;
 		@"com.beatport.BeatportPro",
 		@"com.Timenut.SongKey",
 		@"com.macromedia.fireworks", // the tap messes up their mouse input
-		@"com.radev.Spacebeat"
+		@"com.radev.Spacebeat",
+        @"pl.micropixels.Anesidora"
 	];
 }
 
@@ -159,6 +160,7 @@ static SPMediaKeyTap *singleton = nil;
 {
 	CGEventTapEnable(self->_eventPort, yeahno);
 }
+
 -(void)setShouldInterceptMediaKeyEvents:(BOOL)newSetting;
 {
 	BOOL oldSetting;
@@ -184,8 +186,7 @@ static CGEventRef tapEventCallback2(CGEventTapProxy proxy, CGEventType type, CGE
 {
 	SPMediaKeyTap *self = (__bridge id)refcon;
 
-    if(type == kCGEventTapDisabledByTimeout) {
-		NSLog(@"Media key event tap was disabled by timeout");
+    if (type == kCGEventTapDisabledByTimeout) {
 		CGEventTapEnable(self->_eventPort, TRUE);
 		return event;
 	} else if(type == kCGEventTapDisabledByUserInput) {
@@ -256,7 +257,7 @@ NSString *kIgnoreMediaKeysDefaultsKey = @"SPIgnoreMediaKeys";
     NSString *bundleIdentifier = app.bundleIdentifier;
     
     NSArray *whitelistIdentifiers = [SPMediaKeyTap defaultMediaKeyUserBundleIdentifiers];
-    if(![whitelistIdentifiers containsObject:bundleIdentifier]) return;
+    if (![whitelistIdentifiers containsObject:bundleIdentifier]) return;
     
     [self.mediaKeyAppList removeObject:app];
     [self.mediaKeyAppList insertObject:app atIndex:0];
